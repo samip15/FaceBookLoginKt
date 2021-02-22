@@ -2,15 +2,20 @@ package com.sam.facebookdemokt
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.facebook.*
 import com.facebook.login.BuildConfig
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var callbackManager: CallbackManager
@@ -63,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, exception.message, Toast.LENGTH_LONG).show()
                 }
             })
+        printKeyHash()
     }
 
     @SuppressLint("LongLogTag")
@@ -201,5 +207,22 @@ class MainActivity : AppCompatActivity() {
         myIntent.putExtra("facebook_email", email)
         myIntent.putExtra("facebook_access_token", accessToken)
         startActivity(myIntent)
+    }
+
+    private fun printKeyHash() {
+        // Add code to print out the key hash
+        try {
+            val info =
+                packageManager.getPackageInfo("com.sam.facebookdemokt", PackageManager.GET_SIGNATURES)
+            for (signature in info.signatures) {
+                val md: MessageDigest = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.e("KeyHash:", e.toString())
+        } catch (e: NoSuchAlgorithmException) {
+            Log.e("KeyHash:", e.toString())
+        }
     }
 }
