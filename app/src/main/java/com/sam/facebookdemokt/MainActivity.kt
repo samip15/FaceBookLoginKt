@@ -1,7 +1,9 @@
 package com.sam.facebookdemokt
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Base64
@@ -10,16 +12,18 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.*
+import com.facebook.AccessToken
 import com.facebook.login.BuildConfig
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var callbackManager: CallbackManager
-
     var id = ""
     var firstName = ""
     var middleName = ""
@@ -36,17 +40,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         callbackManager = CallbackManager.Factory.create()
-
-
         if (isLoggedIn()) {
             Log.d("LoggedIn? :", "YES")
+                openDetailsActivity()
             // Show the Activity with the logged in user
         } else {
             Log.d("LoggedIn? :", "NO")
             // Show the Home Activity
         }
-
-
         val fbLoginBtn = findViewById<Button>(R.id.facebook_login_btn)
         fbLoginBtn.setOnClickListener {
             LoginManager.getInstance()
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             })
         printKeyHash()
     }
+
 
     @SuppressLint("LongLogTag")
     fun getUserProfile(token: AccessToken?, userId: String?) {
@@ -198,22 +200,37 @@ class MainActivity : AppCompatActivity() {
 
     private fun openDetailsActivity() {
         val myIntent = Intent(this, DetailsActivity::class.java)
-        myIntent.putExtra("facebook_id", id)
-        myIntent.putExtra("facebook_first_name", firstName)
-        myIntent.putExtra("facebook_middle_name", middleName)
-        myIntent.putExtra("facebook_last_name", lastName)
-        myIntent.putExtra("facebook_name", name)
-        myIntent.putExtra("facebook_picture", picture)
-        myIntent.putExtra("facebook_email", email)
-        myIntent.putExtra("facebook_access_token", accessToken)
+//        myIntent.putExtra("facebook_id", id)
+//        myIntent.putExtra("facebook_first_name", firstName)
+//        myIntent.putExtra("facebook_middle_name", middleName)
+//        myIntent.putExtra("facebook_last_name", lastName)
+//        myIntent.putExtra("facebook_name", name)
+//        myIntent.putExtra("facebook_picture", picture)
+//        myIntent.putExtra("facebook_email", email)
+//        myIntent.putExtra("facebook_access_token", accessToken)
+        var token = getSharedPreferences("login", Context.MODE_PRIVATE)
+        var editor = token.edit()
+        editor.putString("facebook_id", id)
+        editor.putString("facebook_first_name", firstName)
+        editor.putString("facebook_middle_name", middleName)
+        editor.putString("facebook_last_name", lastName)
+        editor.putString("facebook_name", name)
+        editor.putString("facebook_email", email)
+        editor.putString("facebook_picture", picture)
+        editor.putString("facebook_access_token", accessToken)
+        editor.commit()
         startActivity(myIntent)
+        finish()
     }
 
     private fun printKeyHash() {
         // Add code to print out the key hash
         try {
             val info =
-                packageManager.getPackageInfo("com.sam.facebookdemokt", PackageManager.GET_SIGNATURES)
+                packageManager.getPackageInfo(
+                    "com.sam.facebookdemokt",
+                    PackageManager.GET_SIGNATURES
+                )
             for (signature in info.signatures) {
                 val md: MessageDigest = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "675798967930",
+    "project_id": "facebookdemokt",
+    "storage_bucket": "facebookdemokt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675798967930:android:8220d4d9e1b619a4c83dc3",
+        "android_client_info": {
+          "package_name": "com.sam.facebookdemokt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675798967930-0r4cqc4b0qltn8o03nrsikcapvscm7nr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWttO2J7vLtcXbAMkK3RXTjItThTlFO8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675798967930-0r4cqc4b0qltn8o03nrsikcapvscm7nr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
